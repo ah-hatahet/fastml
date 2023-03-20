@@ -12,15 +12,41 @@ class ScoringItem(BaseModel):
     PetalLength: float
     PetalWidth: float
 
-with open('model.pkl','rb') as f:
-    model = pickle.load(f)
-    
+with open('models/KNN.pkl','rb') as f:
+    knn = pickle.load(f)
 
-@app.post('/')
+with open('models/RF.pkl','rb') as f:
+    rf = pickle.load(f)
+with open('models/SVM.pkl','rb') as f:
+    svm = pickle.load(f)
+with open('models/LR.pkl','rb') as f:
+    lr = pickle.load(f)
 
+@app.post('/knn_endpoint')
+@app.post('/rf_endpoint')
+@app.post('/svm_endpoint')
+@app.post('/lr_endpoint')
 
-async def scoring_ençdpoint(item: ScoringItem):
+async def knn_endpoint(item: ScoringItem):
     df = pd.DataFrame([item.dict().values()],columns = item.dict().keys())
-    yhat = model.predict(df)
+    yhat = knn.predict(df)
+
+    return {'prediction':float(yhat)}
+
+async def rf_endpoint(item: ScoringItem):
+    df = pd.DataFrame([item.dict().values()],columns = item.dict().keys())
+    yhat = rf.predict(df)
+
+    return {'prediction':float(yhat)}
+
+async def svm_endpoint(item: ScoringItem):
+    df = pd.DataFrame([item.dict().values()],columns = item.dict().keys())
+    yhat = svm.predict(df)
+
+    return {'prediction':float(yhat)}
+
+async def lr_endpoint(item: ScoringItem):
+    df = pd.DataFrame([item.dict().values()],columns = item.dict().keys())
+    yhat = lr.predict(df)
 
     return {'prediction':float(yhat)}
